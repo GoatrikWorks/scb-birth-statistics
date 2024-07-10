@@ -1,0 +1,333 @@
+// Importera andra stilar
+@import 'variables';
+@import 'mixins';
+@import 'base';
+@import 'components/navbar';
+@import 'components/footer';
+@import 'pages/home';
+@import 'pages/birth-data';
+
+// Definiera variabler
+$primary-color: #FF204E;
+$secondary-color: #A0153E;
+$tertiary-color: #5D0E41;
+$background-color: #00224D;
+$text-color: #FFFFFF;
+$border-color: #5D0E41;
+$error-color: #FF204E;
+
+@mixin mobile {
+  @media (max-width: 768px) {
+    @content;
+  }
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  line-height: 1.6;
+  color: $text-color;
+  background-color: $background-color;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.navbar {
+  background-color: $secondary-color;
+  padding: 1rem 0;
+
+  ul {
+    display: flex;
+    justify-content: center;
+    list-style-type: none;
+
+    @include mobile {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+
+  li {
+    margin: 0 1rem;
+
+    @include mobile {
+      margin: 0.5rem 0;
+    }
+  }
+
+  a {
+    color: $text-color;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: $primary-color;
+    }
+  }
+}
+
+.main-content {
+  min-height: calc(100vh - 120px);
+  padding: 2rem 0;
+}
+
+.footer {
+  background-color: $tertiary-color;
+  color: $text-color;
+  text-align: center;
+  padding: 1rem 0;
+
+  a {
+    color: $primary-color;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.birth-data {
+  @extend .container;
+
+  &__update-btn {
+    background-color: $primary-color;
+    color: $text-color;
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: darken($primary-color, 10%);
+    }
+
+    &:disabled {
+      background-color: lighten($secondary-color, 20%);
+      cursor: not-allowed;
+    }
+  }
+
+  &__chart, &__map {
+    margin: 2rem 0;
+    background-color: lighten($background-color, 10%);
+    padding: 1rem;
+    border-radius: 8px;
+
+    @include mobile {
+      padding: 0.5rem;
+    }
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 2rem;
+
+    @include mobile {
+      font-size: 0.8rem;
+    }
+
+    th, td {
+      border: 1px solid $border-color;
+      padding: 0.5rem;
+      text-align: left;
+
+      @include mobile {
+        padding: 0.25rem;
+      }
+    }
+
+    th {
+      background-color: $secondary-color;
+      color: $text-color;
+    }
+
+    tr:nth-child(even) {
+      background-color: lighten($background-color, 5%);
+    }
+  }
+}
+
+.error-message {
+  background-color: $error-color;
+  color: $text-color;
+  padding: 1rem;
+  margin: 1rem 0;
+  border-radius: 4px;
+}
+
+.loading {
+  text-align: center;
+  font-size: 1.2rem;
+  margin: 2rem 0;
+  color: $primary-color;
+}
+
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: $primary-color;
+  transform-origin: 0%;
+}
+
+.theme-toggle {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: $text-color;
+  font-size: 1.5rem;
+  cursor: pointer;
+  z-index: 1000;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: rgba($primary-color, 0.2);
+  }
+}
+
+.view-toggle {
+  display: flex;
+  justify-content: center;
+  margin: 1rem 0;
+
+  button {
+    background-color: $secondary-color;
+    color: $text-color;
+    border: none;
+    padding: 0.5rem 1rem;
+    margin: 0 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: $primary-color;
+    }
+
+    &.active {
+      background-color: $primary-color;
+    }
+  }
+}
+
+.search-container {
+  margin: 1rem 0;
+  display: flex;
+  justify-content: center;
+}
+
+.search-input {
+  width: 100%;
+  max-width: 400px;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 2px solid $secondary-color;
+  border-radius: 4px;
+  transition: border-color 0.3s ease;
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+  }
+}
+
+.dark-mode {
+  background-color: darken($background-color, 10%);
+  color: lighten($text-color, 10%);
+
+  .birth-data {
+    &__chart, &__map {
+      background-color: lighten($background-color, 5%);
+    }
+
+    &__table {
+      th {
+        background-color: darken($secondary-color, 10%);
+      }
+
+      tr:nth-child(even) {
+        background-color: darken($background-color, 5%);
+      }
+    }
+
+    &__update-btn {
+      background-color: $primary-color;
+
+      &:hover {
+        background-color: lighten($primary-color, 10%);
+      }
+
+      &:disabled {
+        background-color: darken($secondary-color, 20%);
+      }
+    }
+  }
+
+  .navbar {
+    background-color: darken($secondary-color, 10%);
+
+    a {
+      color: lighten($text-color, 10%);
+
+      &:hover {
+        color: $primary-color;
+      }
+    }
+  }
+
+  .footer {
+    background-color: darken($tertiary-color, 10%);
+  }
+
+  .theme-toggle {
+    color: lighten($text-color, 10%);
+
+    &:hover {
+      background-color: rgba($primary-color, 0.3);
+    }
+  }
+
+  .search-input {
+    background-color: lighten($background-color, 5%);
+    color: $text-color;
+    border-color: $tertiary-color;
+
+    &:focus {
+      border-color: $primary-color;
+    }
+  }
+
+  .view-toggle {
+    button {
+      background-color: darken($secondary-color, 10%);
+
+      &:hover, &.active {
+        background-color: $primary-color;
+      }
+    }
+  }
+
+  .error-message {
+    background-color: darken($error-color, 10%);
+  }
+
+  .loading {
+    color: lighten($primary-color, 10%);
+  }
+
+  .progress-bar {
+    background: lighten($primary-color, 10%);
+  }
+}

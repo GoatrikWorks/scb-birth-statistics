@@ -1,0 +1,25 @@
+.footer {
+  background-color: $background-color;
+  padding: 2rem 0;
+  margin-top: 3rem;
+  text-align: center;
+
+  &__content {
+    @extend .container;
+  }
+
+  p {
+    margin: 0.5rem 0;
+    color: $secondary-color;
+  }
+
+  a {
+    color: $primary-color;
+    text-decoration: none;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: darken($primary-color, 10%);
+    }
+  }
+}

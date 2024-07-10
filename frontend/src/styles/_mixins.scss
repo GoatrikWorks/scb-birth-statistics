@@ -1,0 +1,16 @@
+@mixin respond-to($breakpoint) {
+  @if map-has-key($breakpoints, $breakpoint) {
+    @media (min-width: map-get($breakpoints, $breakpoint)) {
+      @content;
+    }
+  } @else {
+    @warn "Tyvärr, ingen värde kunde hittas för '#{$breakpoint}'. "
+        + "Tillgängliga breakpoints är: #{map-keys($breakpoints)}.";
+  }
+}
+
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

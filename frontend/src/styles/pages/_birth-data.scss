@@ -1,0 +1,38 @@
+.birth-data {
+  @extend .container;
+  padding-top: 2rem;
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1.5rem;
+
+    th, td {
+      border: 1px solid $secondary-color;
+      padding: 0.75rem;
+      text-align: left;
+    }
+
+    th {
+      background-color: $primary-color;
+      color: white;
+    }
+
+    tr:nth-child(even) {
+      background-color: $background-color;
+    }
+  }
+
+  &__update-btn {
+    background-color: $primary-color;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: darken($primary-color, 10%);
+    }
+  }
+}

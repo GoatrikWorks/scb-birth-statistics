@@ -4,3 +4,83 @@
 .gitignore,a/5/a5cc2925ca8258af241be7e5b0381edf30266302
 <
 package.json,7/0/7030d0b2f71b999ff89a343de08c414af32fc93a
+B
+frontend/README.md,6/a/6a3a36e34dda2b89c027f00ac950371695b13c75
+9
+	README.md,8/e/8ec9a00bfd09b3190ac6b22251dbb1aa95a0579d
+V
+&frontend/src/components/ProgressBar.js,a/2/a2d1dfbc8aabcf73c6e36d2ef0c6fd1858411b33
+Q
+!frontend/src/components/Footer.js,5/b/5bf22cac25f844a58c9b473f4b294e86ef4c9b55
+J
+frontend/public/robots.txt,7/1/71da921be3a0f0a448954fe008e28e105a81deb2
+J
+frontend/public/index.html,5/3/53b461857fde9b76a1c6e79a500050ceffbd7f33
+Q
+!frontend/src/components/Navbar.js,7/8/78ecbb58ac3335824c5ccde02e65cf410312dd60
+V
+&frontend/src/components/ThemeToggle.js,1/7/17b1c3ccf8ceb3c7dde06d1335b162cb0830206f
+S
+#frontend/src/styles/_variables.scss,a/0/a015e9db8a9765dd159ebe157f4854137c8cf058
+P
+ backend/utils/cityCoordinates.js,b/6/b6e61635f40e185b23f7980ea86cb23f6706fe5d
+O
+frontend/src/pages/BirthData.js,1/b/1b5c612e284c8c7a6ffe4108c47f395074996626
+J
+frontend/src/pages/Home.js,6/d/6d69fb10eaae9b9c3ab35dc11a291465f02da4fe
+N
+frontend/src/styles/_base.scss,8/8/88709c8f00cc3080ae8ad9b45fed022a7c315d3c
+M
+frontend/src/styles/main.scss,a/6/a69379c79027c1e1dd17d1918f6cc29fa9e3977c
+P
+ frontend/src/styles/_mixins.scss,d/0/d0e162bdf00fb2cca0d9692a5d8b6e0368685690
+[
++frontend/src/styles/components/_navbar.scss,1/5/15ea96cc26b4d57c4ecf5cfadf02f5c0452adff9
+[
++frontend/src/styles/components/_footer.scss,6/d/6da839b9222fdbbad1eb58b2317dfd558a567272
+S
+#.idea/sonarlint/issuestore/index.pb,9/f/9fe84ebb15faf917b7def6236dba604453cc61e0
+Z
+*frontend/src/styles/pages/_birth-data.scss,1/7/17925a284c69c973216ec953d7eb481f6b8b7c8d
+E
+frontend/package.json,3/7/37083060967a471c011a16651e22bdc2ade41759
+T
+$frontend/src/styles/pages/_home.scss,a/9/a9ccacb338300a80841192221221a24348c8c336
+]
+-.idea/sonarlint/securityhotspotstore/index.pb,8/8/88a9255124c95bdc913197c120a8d560edc59c8e
+D
+frontend/src/App.css,8/a/8a75d7beb1451b6fe9282486fbd897a9a8156b7f
+F
+frontend/src/index.css,9/1/91e522be11677dbeaea3b85493b4868d2728cb6c
+E
+frontend/src/logo.svg,6/1/611470f7439a2ba36e003ec738e01fc4d55bb610
+D
+backend/package.json,2/d/2d67691333633e849af94af966942f0c1b3151c6
+O
+frontend/src/reportWebVitals.js,9/f/9f720addad7168969b50fe5ceca5a9e8dcf8069d
+E
+frontend/src/index.js,0/9/09a4e53ab0e5e7637fd01136f19a9bb570e1ef2d
+J
+frontend/src/setupTests.js,7/3/73d6ccd1abf2bb05a47e15c443fb0e32314ec163
+O
+backend/data/svenska-stader.csv,8/e/8e30bdb0d283222ea47187a681008dba615d44da
+H
+frontend/src/App.test.js,8/2/824b503175b2d4643dca251a406e74fc8b4562e6
+C
+frontend/src/App.js,d/6/d63b8ace488b6134c279ccc0cc109223d4d79c20
+A
+backend/server.js,6/a/6ad52417a68c4b063613f13b17bfb50a32650e68
+K
+backend/models/BirthData.js,a/2/a2318b8e8a8b8c2acd98952d19e41e7d6326cd24
+I
+backend/package-lock.json,1/5/151d7c3d3a228f46120563e689d0c68b7f56fe6f
+Q
+!backend/routes/birthDataRoutes.js,5/9/590c6290eed2702b903a02cfa9a6ec116c6568b8
+Z
+*backend/controllers/birthDataController.js,9/7/9744849d1247439fc2a571c27fa5a273f1c94af7
+A
+package-lock.json,f/a/fa288d1472d29beccb489a676f68739ad365fc47
+J
+frontend/package-lock.json,7/5/75b3b81cff849b08343553e269c3327a04ab22e0
+M
+frontend/public/manifest.json,c/d/cd34dec7520a7acb6883aced77aaaa93699c86ed
