@@ -4,8 +4,6 @@
 .gitignore,a/5/a5cc2925ca8258af241be7e5b0381edf30266302
 <
 package.json,7/0/7030d0b2f71b999ff89a343de08c414af32fc93a
-B
-frontend/README.md,6/a/6a3a36e34dda2b89c027f00ac950371695b13c75
 9
 	README.md,8/e/8ec9a00bfd09b3190ac6b22251dbb1aa95a0579d
 V
@@ -62,8 +60,6 @@ E
 frontend/src/index.js,0/9/09a4e53ab0e5e7637fd01136f19a9bb570e1ef2d
 J
 frontend/src/setupTests.js,7/3/73d6ccd1abf2bb05a47e15c443fb0e32314ec163
-O
-backend/data/svenska-stader.csv,8/e/8e30bdb0d283222ea47187a681008dba615d44da
 H
 frontend/src/App.test.js,8/2/824b503175b2d4643dca251a406e74fc8b4562e6
 C
@@ -84,3 +80,33 @@ J
 frontend/package-lock.json,7/5/75b3b81cff849b08343553e269c3327a04ab22e0
 M
 frontend/public/manifest.json,c/d/cd34dec7520a7acb6883aced77aaaa93699c86ed
+<
+backend/.env,f/3/f30451335edfb80e231f658d0defc83bb7e4c3a7
+b
+2frontend/src/assets/swedish_municipalities.geojson,b/a/bac92a5db890a83f070c3e027d320faa6ad8fabd
+D
+backend/data/se.json,c/2/c20f9871eec096f246aa7554c53233d4aa471003
+L
+backend/routes/cityRoutes.js,9/3/93891a2c4fb38ff5f0eabfe24773c3411c8ae614
+O
+backend/routes/geoDataRoutes.js,d/5/d59bcd1d3e3218f6326ab063d84f074a414683cf
+S
+#backend/data/municipalityMapping.js,3/f/3fa32f86404d27ac1449835bed956a4f76c9b823
+T
+$frontend/src/components/DataTable.js,9/2/922cc5262bf982e84f795d7f6e06f408eda37f75
+R
+"frontend/src/components/DataMap.js,6/7/67966a18ef662f75c9ff9044e560728ac491b12c
+T
+$frontend/src/components/DataChart.js,9/b/9bcd805b117d3e103c88792ec4b133b2b4a3db6b
+A
+frontend/src/.env,a/3/a3d348ab445b09d751f72f5d13f918a93f87f302
+L
+frontend/src/services/api.js,0/b/0b6f130d0bb5b08cd129b0001d22d59a8b3a9e6d
+^
+.frontend/src/styles/components/_datachart.scss,3/b/3b6d606d73cf165153e0275185856a3b0eb1dbe8
+\
+,frontend/src/styles/components/_datamap.scss,5/4/544bef4b326f0c556848558a176770def70f867b
+^
+.frontend/src/styles/components/_datatable.scss,e/1/e1880da7f40503f28e990b2ffb492e5a2e7d8f67
+[
++backend/data/swedish_municipalities.geojson,4/2/428c68252326dea4d5687a4ca258a5be70d38957

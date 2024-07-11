@@ -1,6 +1,12 @@
 import React from 'react';
 import { motion, useSpring } from 'framer-motion';
 
+/**
+ * ProgressBar component
+ * @param {Object} props - Component props
+ * @param {boolean} props.isAnimating - Whether the progress bar should be animating
+ * @returns {JSX.Element} A progress bar that animates based on the isAnimating prop
+ */
 const ProgressBar = ({ isAnimating }) => {
     const scaleX = useSpring(0, {
         stiffness: 100,

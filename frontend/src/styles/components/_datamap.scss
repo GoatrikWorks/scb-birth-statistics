@@ -1,0 +1,36 @@
+.birth-data__map {
+  margin: 2rem 0;
+  background-color: lighten($background-color, 10%);
+  padding: 1rem;
+  border-radius: 8px;
+
+  @include mobile {
+    padding: 0.5rem;
+  }
+}
+
+.leaflet-container {
+  height: 500px;
+  width: 100%;
+  border-radius: 4px;
+}
+
+.leaflet-popup-content-wrapper {
+  background-color: $secondary-color;
+  color: $text-color;
+}
+
+.leaflet-popup-tip {
+  background-color: $secondary-color;
+}
+
+.dark-mode {
+  .birth-data__map {
+    background-color: lighten($background-color, 5%);
+  }
+
+  .leaflet-popup-content-wrapper,
+  .leaflet-popup-tip {
+    background-color: darken($secondary-color, 10%);
+  }
+}

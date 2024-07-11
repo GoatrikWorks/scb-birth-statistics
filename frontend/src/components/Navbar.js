@@ -2,6 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
+/**
+ * Navbar component
+ * @returns {JSX.Element} The navigation bar of the application
+ */
 function Navbar() {
     return (
         <nav className="navbar">

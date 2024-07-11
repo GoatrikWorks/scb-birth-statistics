@@ -9,6 +9,10 @@ import ProgressBar from './components/ProgressBar';
 import ThemeToggle from './components/ThemeToggle';
 import './styles/main.scss';
 
+/**
+ * Main App component
+ * @returns {JSX.Element} The main application structure
+ */
 function App() {
     const [isLoading, setIsLoading] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(false);

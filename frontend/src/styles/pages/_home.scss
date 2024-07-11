@@ -10,7 +10,7 @@
   }
 
   &__about {
-    background-color: $background-color;
+    background-color: lighten($background-color, 5%);
     border-radius: 5px;
     padding: 1.5rem;
     margin-top: 2rem;

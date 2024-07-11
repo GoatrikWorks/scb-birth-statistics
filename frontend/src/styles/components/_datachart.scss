@@ -1,0 +1,39 @@
+.birth-data__chart {
+  margin: 2rem 0;
+  background-color: lighten($background-color, 10%);
+  padding: 1rem;
+  border-radius: 8px;
+
+  @include mobile {
+    padding: 0.5rem;
+  }
+}
+
+.recharts-wrapper {
+  margin-bottom: 1rem;
+}
+
+.recharts-default-tooltip {
+  background-color: $secondary-color !important;
+  border: 1px solid $border-color !important;
+  border-radius: 4px;
+  padding: 0.5rem !important;
+}
+
+.recharts-tooltip-label {
+  color: $text-color !important;
+}
+
+.recharts-tooltip-item {
+  color: $primary-color !important;
+}
+
+.dark-mode {
+  .birth-data__chart {
+    background-color: lighten($background-color, 5%);
+  }
+
+  .recharts-default-tooltip {
+    background-color: darken($secondary-color, 10%) !important;
+  }
+}

@@ -1,6 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
+/**
+ * Home component
+ * @returns {JSX.Element} The home page content
+ */
 function Home() {
     return (
         <motion.div

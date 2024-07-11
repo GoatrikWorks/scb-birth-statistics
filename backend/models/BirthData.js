@@ -1,10 +1,13 @@
 const mongoose = require('mongoose');
 
+/**
+ * Mongoose schema for birth data
+ */
 const birthDataSchema = new mongoose.Schema({
     municipalityCode: String,
     municipalityName: String,
     gender: String,
-    year: Number,
+    year: String,
     value: Number
 });
 

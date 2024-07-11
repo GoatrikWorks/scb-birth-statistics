@@ -8,24 +8,38 @@
     margin-top: 1.5rem;
 
     th, td {
-      border: 1px solid $secondary-color;
+      border: 1px solid $border-color;
       padding: 0.75rem;
       text-align: left;
     }
 
     th {
-      background-color: $primary-color;
-      color: white;
+      background-color: $secondary-color;
+      color: $text-color;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: $primary-color;
+      }
     }
 
     tr:nth-child(even) {
-      background-color: $background-color;
+      background-color: lighten($background-color, 5%);
+    }
+
+    @include mobile {
+      font-size: 0.8rem;
+
+      th, td {
+        padding: 0.25rem;
+      }
     }
   }
 
   &__update-btn {
     background-color: $primary-color;
-    color: white;
+    color: $text-color;
     border: none;
     padding: 0.5rem 1rem;
     cursor: pointer;
@@ -33,6 +47,22 @@
 
     &:hover {
       background-color: darken($primary-color, 10%);
+    }
+
+    &:disabled {
+      background-color: lighten($secondary-color, 20%);
+      cursor: not-allowed;
+    }
+  }
+
+  &__chart, &__map {
+    margin: 2rem 0;
+    background-color: lighten($background-color, 10%);
+    padding: 1rem;
+    border-radius: 8px;
+
+    @include mobile {
+      padding: 0.5rem;
     }
   }
 }

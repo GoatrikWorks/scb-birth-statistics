@@ -1,5 +1,5 @@
 .navbar {
-  background-color: $primary-color;
+  background-color: $secondary-color;
   padding: 1rem 0;
 
   ul {
@@ -7,20 +7,28 @@
     list-style-type: none;
     padding: 0;
     margin: 0;
+
+    @include mobile {
+      flex-direction: column;
+    }
   }
 
   li {
     margin: 0 1rem;
+
+    @include mobile {
+      margin: 0.5rem 0;
+    }
   }
 
   a {
-    color: white;
+    color: $text-color;
     text-decoration: none;
     font-weight: bold;
-    transition: opacity 0.3s ease;
+    transition: color 0.3s ease;
 
     &:hover {
-      opacity: 0.8;
+      color: $primary-color;
     }
   }
 }

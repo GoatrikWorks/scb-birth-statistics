@@ -1,5 +1,9 @@
 import React from 'react';
 
+/**
+ * Footer component
+ * @returns {JSX.Element} The footer of the application
+ */
 function Footer() {
     return (
         <footer className="footer">
