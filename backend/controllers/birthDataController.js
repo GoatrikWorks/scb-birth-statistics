@@ -1,11 +1,12 @@
 const axios = require('axios');
+const config = require('../config/config');
 const BirthData = require('../models/BirthData');
 const NodeCache = require('node-cache');
 const municipalityMapping = require('../data/municipalityMapping');
 
 // Constants for the API endpoint and cache settings
-const SCB_API_URL = 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/BE/BE0101/BE0101H/FoddaK';
-const dataCache = new NodeCache({ stdTTL: 3600 }); // Cache for 1 hour
+const SCB_API_URL = config.SCB_API_URL;
+const dataCache = new NodeCache({ stdTTL: config.CACHE_TTL });
 
 /**
  * Creates the query object for SCB API

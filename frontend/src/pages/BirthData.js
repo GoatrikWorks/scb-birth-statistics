@@ -1,5 +1,3 @@
-// src/pages/BirthData.js
-
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
@@ -100,7 +98,8 @@ function BirthData({ setIsLoading }) {
         );
     }, [birthData, comparisonMode, comparisonFilters]);
 
-    if (loading) return <div>Laddar...</div>;
+    // Render loading state
+    if (loading) return <div className="loading">Laddar...</div>;
 
     return (
         <motion.div
@@ -111,6 +110,8 @@ function BirthData({ setIsLoading }) {
             transition={{duration: 0.5}}
         >
             <h1>Födelsestatistik</h1>
+
+            {/* Error message */}
             {error && (
                 <motion.div
                     className="error-message"
@@ -121,21 +122,37 @@ function BirthData({ setIsLoading }) {
                     {error}
                 </motion.div>
             )}
-            <motion.button
-                className="birth-data__update-btn"
-                onClick={updateBirthData}
-                disabled={loading || updateStatus === 'Uppdaterar...'}
-                whileHover={{scale: 1.05}}
-                whileTap={{scale: 0.95}}
-            >
-                {updateStatus || 'Uppdatera data'}
-            </motion.button>
-            <div className="view-toggle">
-                <button onClick={() => setView('table')} className={view === 'tabell' ? 'active' : ''}>Tabell</button>
-                <button onClick={() => setView('map')} className={view === 'map' ? 'active' : ''}>Karta</button>
-                <button onClick={() => setView('chart')} className={view === 'chart' ? 'active' : ''}>Diagram</button>
-            </div>
-            <div className="filters">
+
+            {/* Controls section */}
+            <div className="birth-data__controls">
+                {/* Update button */}
+                <motion.button
+                    className="birth-data__update-btn"
+                    onClick={updateBirthData}
+                    disabled={loading || updateStatus === 'Uppdaterar...'}
+                    whileHover={{scale: 1.05}}
+                    whileTap={{scale: 0.95}}
+                >
+                    {updateStatus || 'Uppdatera data'}
+                </motion.button>
+
+                {/* View toggle */}
+                <div className="view-toggle">
+                    {['table', 'map', 'chart'].map((viewType) => (
+                        <button
+                            key={viewType}
+                            onClick={() => setView(viewType)}
+                            className={view === viewType ? 'active' : ''}
+                        >
+                            {/* Change button text to Swedish */}
+                            {viewType === 'table' && 'Tabell'}
+                            {viewType === 'map' && 'Karta'}
+                            {viewType === 'chart' && 'Diagram'}
+                        </button>
+                    ))}
+                </div>
+
+                {/* Filter controls */}
                 <div className="filter-group">
                     <input
                         type="text"
@@ -166,7 +183,7 @@ function BirthData({ setIsLoading }) {
                     </select>
                 </div>
                 <div className="filter-group">
-                <select
+                    <select
                         value={filters.municipality}
                         onChange={(e) => setFilters({...filters, municipality: e.target.value})}
                     >
@@ -176,47 +193,53 @@ function BirthData({ setIsLoading }) {
                         ))}
                     </select>
                 </div>
-            </div>
-            <div className="comparison-toggle">
-                <label>
-                    <input
-                        type="checkbox"
-                        checked={comparisonMode}
-                        onChange={(e) => setComparisonMode(e.target.checked)}
-                    />
-                    Aktivera jämförelseläge
-                </label>
-            </div>
-            {comparisonMode && (
-                <div className="comparison-filters">
-                    <select
-                        value={comparisonFilters.year}
-                        onChange={(e) => setComparisonFilters({...comparisonFilters, year: e.target.value})}
-                    >
-                        <option value="">Alla år</option>
-                        {years.map(year => (
-                            <option key={year} value={year}>{year}</option>
-                        ))}
-                    </select>
-                    <select
-                        value={comparisonFilters.gender}
-                        onChange={(e) => setComparisonFilters({...comparisonFilters, gender: e.target.value})}
-                    >
-                        <option value="">Alla kön</option>
-                        <option value="1">Män</option>
-                        <option value="2">Kvinnor</option>
-                    </select>
-                    <select
-                        value={comparisonFilters.municipality}
-                        onChange={(e) => setComparisonFilters({...comparisonFilters, municipality: e.target.value})}
-                    >
-                        <option value="">Alla kommuner</option>
-                        {municipalities.map(municipality => (
-                            <option key={municipality} value={municipality}>{municipality}</option>
-                        ))}
-                    </select>
+
+                {/* Comparison mode toggle */}
+                <div className="comparison-toggle">
+                    <label>
+                        <input
+                            type="checkbox"
+                            checked={comparisonMode}
+                            onChange={(e) => setComparisonMode(e.target.checked)}
+                        />
+                        Aktivera jämförelseläge
+                    </label>
                 </div>
-            )}
+
+                {/* Comparison filters */}
+                {comparisonMode && (
+                    <div className="comparison-filters">
+                        <select
+                            value={comparisonFilters.year}
+                            onChange={(e) => setComparisonFilters({...comparisonFilters, year: e.target.value})}
+                        >
+                            <option value="">Alla år</option>
+                            {years.map(year => (
+                                <option key={year} value={year}>{year}</option>
+                            ))}
+                        </select>
+                        <select
+                            value={comparisonFilters.gender}
+                            onChange={(e) => setComparisonFilters({...comparisonFilters, gender: e.target.value})}
+                        >
+                            <option value="">Alla kön</option>
+                            <option value="1">Män</option>
+                            <option value="2">Kvinnor</option>
+                        </select>
+                        <select
+                            value={comparisonFilters.municipality}
+                            onChange={(e) => setComparisonFilters({...comparisonFilters, municipality: e.target.value})}
+                        >
+                            <option value="">Alla kommuner</option>
+                            {municipalities.map(municipality => (
+                                <option key={municipality} value={municipality}>{municipality}</option>
+                            ))}
+                        </select>
+                    </div>
+                )}
+            </div>
+
+            {/* Data visualization */}
             {view === 'table' && <DataTable data={filteredData} comparisonData={comparisonData}/>}
             {view === 'map' && <DataMap data={filteredData} comparisonData={comparisonData}/>}
             {view === 'chart' && <DataChart data={filteredData} comparisonData={comparisonData}/>}

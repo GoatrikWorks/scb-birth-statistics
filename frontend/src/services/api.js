@@ -1,5 +1,4 @@
-// src/services/api.js
-
+const config = require('../config/config');
 import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';

@@ -1,68 +1,289 @@
 .birth-data {
   @extend .container;
   padding-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  h1 {
+    color: $primary-color;
+    margin-bottom: 1.5rem;
+  }
+
+  &__controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    justify-content: center;
+    max-width: 80%;
+
+    .filter-group, .view-toggle, .birth-data__update-btn {
+      flex: 1 1 30%;
+      min-width: 200px;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid $border-color;
+      border-radius: 4px;
+      background-color: rgba($background-color, 0.8);
+      color: $text-color;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+
+      &:focus, &:hover {
+        outline: none;
+        border-color: $primary-color;
+        background-color: $background-color;
+      }
+    }
+
+    .view-toggle {
+      display: flex;
+      gap: 0.5rem;
+      flex: 1 1 100%;
+
+      button {
+        flex: 1;
+        cursor: pointer;
+        background-color: $secondary-color;
+        color: #ffffff;
+        border: none;
+        font-weight: bold;
+
+        &:hover {
+          background-color: darken($secondary-color, 10%);
+        }
+
+        &.active {
+          background-color: $primary-color;
+        }
+
+        &:disabled {
+          background-color: lighten($secondary-color, 20%);
+          cursor: not-allowed;
+        }
+      }
+    }
+
+    .birth-data__update-btn {
+      background-color: $primary-color;
+      color: #ffffff;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      font-weight: bold;
+
+      &:hover {
+        background-color: darken($primary-color, 10%);
+      }
+
+      &:disabled {
+        background-color: lighten($primary-color, 20%);
+        cursor: not-allowed;
+      }
+    }
+
+    .comparison-toggle {
+      flex-basis: 100%;
+      margin-top: 1rem;
+
+      label {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        font-weight: bold;
+
+        input[type="checkbox"] {
+          margin-right: 0.5rem;
+          width: auto;
+          height: auto;
+        }
+      }
+    }
+
+    .comparison-filters {
+      flex-basis: 100%;
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+
+      select {
+        flex: 1;
+      }
+    }
+  }
 
   &__table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     margin-top: 1.5rem;
+    background-color: rgba($background-color, 0.8);
+    border-radius: 4px;
+    overflow: hidden;
 
     th, td {
-      border: 1px solid $border-color;
       padding: 0.75rem;
       text-align: left;
+      border-bottom: 1px solid $border-color;
     }
 
     th {
-      background-color: $secondary-color;
+      background-color: $tertiary-color;
       color: $text-color;
+      font-weight: bold;
       cursor: pointer;
       transition: background-color 0.3s ease;
 
       &:hover {
-        background-color: $primary-color;
+        background-color: darken($tertiary-color, 5%);
       }
     }
 
-    tr:nth-child(even) {
-      background-color: lighten($background-color, 5%);
+    tr {
+      &:nth-child(even) {
+        background-color: lighten($tertiary-color, 5%);
+      }
+
+      &:hover {
+        background-color: rgba($primary-color, 0.1);
+      }
+    }
+
+    .hide-column {
+      display: none;
     }
 
     @include mobile {
       font-size: 0.8rem;
 
       th, td {
-        padding: 0.25rem;
+        padding: 0.5rem;
       }
-    }
-  }
-
-  &__update-btn {
-    background-color: $primary-color;
-    color: $text-color;
-    border: none;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-
-    &:hover {
-      background-color: darken($primary-color, 10%);
-    }
-
-    &:disabled {
-      background-color: lighten($secondary-color, 20%);
-      cursor: not-allowed;
     }
   }
 
   &__chart, &__map {
     margin: 2rem 0;
-    background-color: lighten($background-color, 10%);
+    background-color: $background-color;
     padding: 1rem;
     border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
     @include mobile {
       padding: 0.5rem;
     }
   }
+}
+
+// Dark mode adjustments
+.dark-mode {
+  .birth-data {
+    &__controls {
+      input, select, button {
+        background-color: rgba(#2c2c2c, 0.8);
+        color: #f0f0f0;
+        border-color: #444;
+
+        &:focus, &:hover {
+          background-color: #2c2c2c;
+          border-color: lighten($primary-color, 15%);
+        }
+      }
+
+      .view-toggle button {
+        background-color: darken($secondary-color, 10%);
+
+        &:hover {
+          background-color: darken($secondary-color, 20%);
+        }
+
+        &.active {
+          background-color: $primary-color;
+        }
+
+        &:disabled {
+          background-color: lighten($secondary-color, 10%);
+        }
+      }
+
+      .birth-data__update-btn {
+        background-color: $primary-color;
+
+        &:hover {
+          background-color: lighten($primary-color, 10%);
+        }
+
+        &:disabled {
+          background-color: darken($primary-color, 20%);
+        }
+      }
+    }
+
+    &__table {
+      background-color: rgba(#1a1a1a, 0.8);
+
+      th {
+        background-color: darken($tertiary-color, 10%);
+        color: #f0f0f0;
+      }
+
+      tr {
+        &:nth-child(even) {
+          background-color: rgba(#2c2c2c, 0.9);
+        }
+
+        &:nth-child(odd) {
+          background-color: rgba(#1a1a1a, 0.9);
+        }
+
+        &:hover {
+          background-color: rgba($primary-color, 0.2);
+        }
+      }
+
+      td {
+        color: #f0f0f0;
+        border-color: #444;
+      }
+    }
+
+    &__chart, &__map {
+      background-color: #262626;
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .birth-data {
+    &__controls {
+      .filter-group, .view-toggle, .birth-data__update-btn {
+        flex-basis: 100%;
+      }
+
+      .view-toggle {
+        flex-direction: column;
+      }
+    }
+  }
+}
+
+// Additional utility classes
+.error-message {
+  background-color: $error-color;
+  color: #ffffff;
+  padding: 1rem;
+  margin: 1rem 0;
+  border-radius: 4px;
+}
+
+.loading {
+  text-align: center;
+  font-size: 1.2rem;
+  margin: 2rem 0;
+  color: $primary-color;
 }

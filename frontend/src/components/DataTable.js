@@ -1,5 +1,3 @@
-// src/components/DataTable.js
-
 import React, { useState, useMemo, useCallback } from 'react';
 import PropTypes from 'prop-types';
 
@@ -92,8 +90,8 @@ function DataTable({ data, comparisonData }) {
 
         return (
             <div className="pagination">
-                <button onClick={() => paginate(1)} disabled={currentPage === 1}>First</button>
-                <button onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1}>Previous</button>
+                <button onClick={() => paginate(1)} disabled={currentPage === 1}>Första</button>
+                <button onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1}>Föregående</button>
                 {pagesToShow.map((number, index) => (
                     number === '...' ?
                         <span key={index}>...</span> :
@@ -105,8 +103,8 @@ function DataTable({ data, comparisonData }) {
                             {number}
                         </button>
                 ))}
-                <button onClick={() => paginate(currentPage + 1)} disabled={currentPage === totalPages}>Next</button>
-                <button onClick={() => paginate(totalPages)} disabled={currentPage === totalPages}>Last</button>
+                <button onClick={() => paginate(currentPage + 1)} disabled={currentPage === totalPages}>Nästa</button>
+                <button onClick={() => paginate(totalPages)} disabled={currentPage === totalPages}>Sista</button>
             </div>
         );
     }, [currentPage, itemsPerPage, paginate, sortedData.length]);
@@ -119,22 +117,22 @@ function DataTable({ data, comparisonData }) {
                     onChange={(e) => setItemsPerPage(Number(e.target.value))}
                     className="items-per-page-select"
                 >
-                    <option value={10}>10 per page</option>
-                    <option value={15}>15 per page</option>
-                    <option value={20}>20 per page</option>
-                    <option value={50}>50 per page</option>
-                    <option value={100}>100 per page</option>
+                    <option value={10}>10 per sida</option>
+                    <option value={15}>15 per sida</option>
+                    <option value={20}>20 per sida</option>
+                    <option value={50}>50 per sida</option>
+                    <option value={100}>100 per sida</option>
                 </select>
             </div>
             <table>
                 <thead>
                 <tr>
-                    <th onClick={() => requestSort('municipalityCode')}>Municipality Code</th>
-                    <th onClick={() => requestSort('municipalityName')}>Municipality Name</th>
-                    <th onClick={() => requestSort('year')}>Year</th>
-                    <th onClick={() => requestSort('gender')}>Gender</th>
-                    <th onClick={() => requestSort('value')}>Births</th>
-                    {comparisonData.length > 0 && <th>Comparison Births</th>}
+                    <th className="hide-column" onClick={() => requestSort('municipalityCode')}>Kommunkod</th> {/* Added class to hide column */}
+                    <th onClick={() => requestSort('municipalityName')}>Kommun</th>
+                    <th onClick={() => requestSort('year')}>År</th>
+                    <th onClick={() => requestSort('gender')}>Kön</th>
+                    <th onClick={() => requestSort('value')}>Födda</th>
+                    {comparisonData.length > 0 && <th>Jämförelse Födsel</th>}
                 </tr>
                 </thead>
                 <tbody>
@@ -146,10 +144,10 @@ function DataTable({ data, comparisonData }) {
                     );
                     return (
                         <tr key={`${item.municipalityCode}-${item.year}-${item.gender}`}>
-                            <td>{item.municipalityCode}</td>
+                            <td className="hide-column">{item.municipalityCode}</td> {/* Added class to hide column */}
                             <td>{item.municipalityName}</td>
                             <td>{item.year}</td>
-                            <td>{item.gender === '1' ? 'Men' : 'Women'}</td>
+                            <td>{item.gender === '1' ? 'Man' : 'Kvinna'}</td>
                             <td>{item.value}</td>
                             {comparisonData.length > 0 &&
                                 <td>{comparisonItem ? comparisonItem.value : 'N/A'}</td>
