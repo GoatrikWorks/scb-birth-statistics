@@ -9,7 +9,6 @@
 @import 'components/datamap';
 @import 'components/datatable';
 
-// Gemensamma komponenter och utility klasser
 .error-message {
   background-color: $error-color;
   color: $text-color;
@@ -37,7 +36,7 @@
 
 .theme-toggle {
   position: fixed;
-  top: 1rem;
+  top: 0.5rem;
   right: 1rem;
   background: none;
   border: none;

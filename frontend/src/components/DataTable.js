@@ -1,24 +1,39 @@
+/**
+ * @file DataTable.js
+ * @description Komponent för att visa födelsedata i en sorterbar och paginerbar tabell.
+ * @requires React
+ * @requires PropTypes
+ */
+
 import React, { useState, useMemo, useCallback } from 'react';
 import PropTypes from 'prop-types';
 
 /**
- * DataTable Component
- * Displays birth data in a sortable and paginated table, with optional comparison data.
+ * @function DataTable
+ * @description Renderar en tabell med födelsedata och möjlighet till sortering och paginering.
  *
- * @param {Object} props
- * @param {Array} props.data - The main dataset to display
- * @param {Array} props.comparisonData - Optional comparison dataset
+ * @param {Object} props - Komponentens props
+ * @param {Array<Object>} props.data - Array med födelsedata-objekt
+ * @param {Array<Object>} [props.comparisonData=[]] - Array med jämförelsedata-objekt
+ *
+ * @returns {JSX.Element} Renderad DataTable-komponent
  */
 function DataTable({ data, comparisonData }) {
-    // State for pagination, sorting, and items per page
-    const [currentPage, setCurrentPage] = useState(1);
+    /** @type {[Object, function]} Sorteringskonfiguration och uppdateringsfunktion */
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
-    const [itemsPerPage, setItemsPerPage] = useState(10);
+
+    /** @type {[number, function]} Antal objekt per sida och uppdateringsfunktion */
+    const [itemsPerPage, setItemsPerPage] = useState(20);
+
+    /** @type {[number, function]} Aktuell sida och uppdateringsfunktion */
+    const [currentPage, setCurrentPage] = useState(1);
 
     /**
-     * Sorts the data based on the current sort configuration
-     * @param {Array} dataToSort - The data array to sort
-     * @returns {Array} Sorted data array
+     * @function sortData
+     * @description Sorterar given data baserat på aktuell sortConfig
+     *
+     * @param {Array<Object>} dataToSort - Data att sortera
+     * @returns {Array<Object>} Sorterad data
      */
     const sortData = useCallback((dataToSort) => {
         if (sortConfig.key !== null) {
@@ -35,26 +50,17 @@ function DataTable({ data, comparisonData }) {
         return dataToSort;
     }, [sortConfig]);
 
-    // Memoized sorted data
+    /** @type {Array<Object>} Memoiserad sorterad huvuddata */
     const sortedData = useMemo(() => sortData(data), [data, sortData]);
+
+    /** @type {Array<Object>} Memoiserad sorterad jämförelsedata */
     const sortedComparisonData = useMemo(() => sortData(comparisonData), [comparisonData, sortData]);
 
-    // Calculate pagination
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = sortedData.slice(indexOfFirstItem, indexOfLastItem);
-
     /**
-     * Changes the current page
-     * @param {number} pageNumber - The page number to navigate to
-     */
-    const paginate = useCallback((pageNumber) => {
-        setCurrentPage(pageNumber);
-    }, []);
-
-    /**
-     * Requests a sort on a specific key
-     * @param {string} key - The key to sort by
+     * @function requestSort
+     * @description Begär sortering på en specifik nyckel
+     *
+     * @param {string} key - Nyckeln att sortera efter
      */
     const requestSort = useCallback((key) => {
         let direction = 'ascending';
@@ -64,50 +70,75 @@ function DataTable({ data, comparisonData }) {
         setSortConfig({ key, direction });
     }, [sortConfig]);
 
-    /**
-     * Renders pagination buttons
-     * @returns {JSX.Element} Rendered pagination buttons
-     */
-    const renderPagination = useCallback(() => {
-        const pageNumbers = [];
-        for (let i = 1; i <= Math.ceil(sortedData.length / itemsPerPage); i++) {
-            pageNumbers.push(i);
-        }
+    /** @type {number} Totalt antal sidor */
+    const totalPages = Math.ceil(sortedData.length / itemsPerPage);
 
-        let pagesToShow = [];
-        const totalPages = pageNumbers.length;
+    /** @type {Array<Object>} Data för aktuell sida */
+    const currentData = useMemo(() => {
+        const begin = (currentPage - 1) * itemsPerPage;
+        const end = begin + itemsPerPage;
+        return sortedData.slice(begin, end);
+    }, [currentPage, itemsPerPage, sortedData]);
+
+    /**
+     * @function renderPaginationButtons
+     * @description Renderar pagineringsknappar
+     *
+     * @returns {JSX.Element} Renderade pagineringsknappar
+     */
+    const renderPaginationButtons = useCallback(() => {
+        const buttons = [];
+        let startPage, endPage;
         if (totalPages <= 7) {
-            pagesToShow = pageNumbers;
+            // Om det finns 7 eller färre sidor, visa alla
+            startPage = 1;
+            endPage = totalPages;
         } else {
+            // Alltid visa första och sista sidan
             if (currentPage <= 4) {
-                pagesToShow = [...pageNumbers.slice(0, 5), '...', totalPages];
-            } else if (currentPage >= totalPages - 3) {
-                pagesToShow = [1, '...', ...pageNumbers.slice(totalPages - 5)];
+                startPage = 1;
+                endPage = 5;
+            } else if (currentPage + 3 >= totalPages) {
+                startPage = totalPages - 4;
+                endPage = totalPages;
             } else {
-                pagesToShow = [1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages];
+                startPage = currentPage - 2;
+                endPage = currentPage + 2;
             }
         }
 
-        return (
-            <div className="pagination">
-                <button onClick={() => paginate(1)} disabled={currentPage === 1}>Första</button>
-                <button onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1}>Föregående</button>
-                {pagesToShow.map((number, index) => (
-                    number === '...' ?
-                        <span key={index}>...</span> :
-                        <button
-                            key={index}
-                            onClick={() => paginate(number)}
-                            className={currentPage === number ? 'active' : ''}
-                        >
-                            {number}
-                        </button>
-                ))}
-                <button onClick={() => paginate(currentPage + 1)} disabled={currentPage === totalPages}>Nästa</button>
-                <button onClick={() => paginate(totalPages)} disabled={currentPage === totalPages}>Sista</button>
-            </div>
-        );
-    }, [currentPage, itemsPerPage, paginate, sortedData.length]);
+        if (startPage > 1) {
+            buttons.push(<button key={1} onClick={() => setCurrentPage(1)}>1</button>);
+            if (startPage > 2) {
+                buttons.push(<span key="ellipsis1">...</span>);
+            }
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            buttons.push(
+                <button
+                    key={i}
+                    onClick={() => setCurrentPage(i)}
+                    className={currentPage === i ? 'active' : ''}
+                >
+                    {i}
+                </button>
+            );
+        }
+
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                buttons.push(<span key="ellipsis2">...</span>);
+            }
+            buttons.push(
+                <button key={totalPages} onClick={() => setCurrentPage(totalPages)}>
+                    {totalPages}
+                </button>
+            );
+        }
+
+        return buttons;
+    }, [currentPage, totalPages, setCurrentPage]);
 
     return (
         <div className="data-table">
@@ -117,8 +148,6 @@ function DataTable({ data, comparisonData }) {
                     onChange={(e) => setItemsPerPage(Number(e.target.value))}
                     className="items-per-page-select"
                 >
-                    <option value={10}>10 per sida</option>
-                    <option value={15}>15 per sida</option>
                     <option value={20}>20 per sida</option>
                     <option value={50}>50 per sida</option>
                     <option value={100}>100 per sida</option>
@@ -127,7 +156,6 @@ function DataTable({ data, comparisonData }) {
             <table>
                 <thead>
                 <tr>
-                    <th className="hide-column" onClick={() => requestSort('municipalityCode')}>Kommunkod</th> {/* Added class to hide column */}
                     <th onClick={() => requestSort('municipalityName')}>Kommun</th>
                     <th onClick={() => requestSort('year')}>År</th>
                     <th onClick={() => requestSort('gender')}>Kön</th>
@@ -136,7 +164,7 @@ function DataTable({ data, comparisonData }) {
                 </tr>
                 </thead>
                 <tbody>
-                {currentItems.map((item, index) => {
+                {currentData.map((item) => {
                     const comparisonItem = sortedComparisonData.find(
                         c => c.municipalityCode === item.municipalityCode &&
                             c.gender === item.gender &&
@@ -144,10 +172,9 @@ function DataTable({ data, comparisonData }) {
                     );
                     return (
                         <tr key={`${item.municipalityCode}-${item.year}-${item.gender}`}>
-                            <td className="hide-column">{item.municipalityCode}</td> {/* Added class to hide column */}
                             <td>{item.municipalityName}</td>
                             <td>{item.year}</td>
-                            <td>{item.gender === '1' ? 'Man' : 'Kvinna'}</td>
+                            <td>{item.gender === '1' ? 'Män' : 'Kvinnor'}</td>
                             <td>{item.value}</td>
                             {comparisonData.length > 0 &&
                                 <td>{comparisonItem ? comparisonItem.value : 'N/A'}</td>
@@ -157,7 +184,21 @@ function DataTable({ data, comparisonData }) {
                 })}
                 </tbody>
             </table>
-            {renderPagination()}
+            <div className="pagination">
+                <button onClick={() => setCurrentPage(1)} disabled={currentPage === 1}>
+                    Första
+                </button>
+                <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>
+                    Föregående
+                </button>
+                {renderPaginationButtons()}
+                <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>
+                    Nästa
+                </button>
+                <button onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages}>
+                    Sista
+                </button>
+            </div>
         </div>
     );
 }

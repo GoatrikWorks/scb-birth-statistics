@@ -1,3 +1,8 @@
+/**
+ * @file _birth-data.scss
+ * @description Stilar för BirthData-komponenten och dess underkomponenter
+ */
+
 .birth-data {
   @extend .container;
   padding-top: 2rem;
@@ -16,27 +21,26 @@
     gap: 1rem;
     margin-bottom: 2rem;
     justify-content: center;
-    max-width: 80%;
+    width: 100%;
 
-    .filter-group, .view-toggle, .birth-data__update-btn {
-      flex: 1 1 30%;
-      min-width: 200px;
-    }
-
-    input, select, button {
-      width: 100%;
+    .birth-data__update-btn {
+      flex: 1 1 100%;
+      background-color: $primary-color;
+      color: #ffffff;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      font-weight: bold;
       padding: 0.75rem;
-      border: 1px solid $border-color;
       border-radius: 4px;
-      background-color: rgba($background-color, 0.8);
-      color: $text-color;
-      font-size: 1rem;
-      transition: all 0.3s ease;
 
-      &:focus, &:hover {
-        outline: none;
-        border-color: $primary-color;
-        background-color: $background-color;
+      &:hover {
+        background-color: darken($primary-color, 10%);
+      }
+
+      &:disabled {
+        background-color: lighten($primary-color, 20%);
+        cursor: not-allowed;
       }
     }
 
@@ -52,6 +56,8 @@
         color: #ffffff;
         border: none;
         font-weight: bold;
+        padding: 0.75rem;
+        border-radius: 4px;
 
         &:hover {
           background-color: darken($secondary-color, 10%);
@@ -68,21 +74,54 @@
       }
     }
 
-    .birth-data__update-btn {
-      background-color: $primary-color;
-      color: #ffffff;
-      border: none;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-      font-weight: bold;
+    .filter-controls, .map-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      flex: 1 1 100%;
 
-      &:hover {
-        background-color: darken($primary-color, 10%);
+      input, select, .year-select, .css-2b097c-container {
+        flex: 1 1 calc(25% - 1rem);
+        min-width: 150px;
       }
 
-      &:disabled {
-        background-color: lighten($primary-color, 20%);
-        cursor: not-allowed;
+      input, select {
+        padding: 0.75rem;
+        border: 1px solid $border-color;
+        border-radius: 4px;
+        background-color: rgba($background-color, 0.8);
+        color: $text-color;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+
+        &:focus, &:hover {
+          outline: none;
+          border-color: $primary-color;
+          background-color: $background-color;
+        }
+      }
+
+      .year-select {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        label {
+          flex-shrink: 0;
+        }
+
+        select {
+          flex: 1;
+        }
+      }
+    }
+
+    .map-filters {
+      justify-content: flex-start;
+
+      select, .css-2b097c-container {
+        flex: 0 1 auto;
+        min-width: 150px;
       }
     }
 
@@ -110,7 +149,7 @@
       gap: 1rem;
       margin-top: 1rem;
 
-      select {
+      select, .css-2b097c-container {
         flex: 1;
       }
     }
@@ -153,10 +192,6 @@
       }
     }
 
-    .hide-column {
-      display: none;
-    }
-
     @include mobile {
       font-size: 0.8rem;
 
@@ -172,11 +207,27 @@
     padding: 1rem;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 100%;
 
     @include mobile {
       padding: 0.5rem;
     }
   }
+}
+
+.leaflet-container {
+  height: 500px;
+  width: 100%;
+  border-radius: 4px;
+}
+
+.leaflet-popup-content-wrapper {
+  background-color: $secondary-color;
+  color: $text-color;
+}
+
+.leaflet-popup-tip {
+  background-color: $secondary-color;
 }
 
 // Dark mode adjustments
@@ -255,14 +306,23 @@
       background-color: #262626;
     }
   }
+
+  .leaflet-popup-content-wrapper,
+  .leaflet-popup-tip {
+    background-color: darken($secondary-color, 10%);
+  }
 }
 
 // Responsive adjustments
 @media (max-width: 768px) {
   .birth-data {
     &__controls {
-      .filter-group, .view-toggle, .birth-data__update-btn {
-        flex-basis: 100%;
+      .filter-controls, .map-filters {
+        flex-direction: column;
+
+        input, select, .year-select, .css-2b097c-container {
+          flex-basis: 100%;
+        }
       }
 
       .view-toggle {

@@ -1,16 +1,26 @@
+/**
+ * @file birthDataController.js
+ * @description Controller för hantering av födelsedata från SCB
+ * @requires axios
+ * @requires ../config/config
+ * @requires ../models/BirthData
+ * @requires node-cache
+ * @requires ../data/municipalityMapping
+ */
+
 const axios = require('axios');
 const config = require('../config/config');
 const BirthData = require('../models/BirthData');
 const NodeCache = require('node-cache');
 const municipalityMapping = require('../data/municipalityMapping');
 
-// Constants for the API endpoint and cache settings
+// Konstanter för API-endpoint och cache-inställningar
 const SCB_API_URL = config.SCB_API_URL;
 const dataCache = new NodeCache({ stdTTL: config.CACHE_TTL });
 
 /**
- * Creates the query object for SCB API
- * @returns {Object} Query object for SCB API
+ * Skapar frågestrukturen för SCB API
+ * @returns {Object} Frågestruktur för SCB API
  */
 const createSCBQuery = () => ({
     query: [
@@ -72,12 +82,13 @@ const createSCBQuery = () => ({
 });
 
 /**
- * Fetches data from SCB API
- * @returns {Promise<Object>} The data from SCB API
+ * Hämtar data från SCB API
+ * @returns {Promise<Object>} Data från SCB API
+ * @throws {Error} Om hämtningen misslyckas
  */
 const fetchDataFromSCB = async () => {
     const query = createSCBQuery();
-    console.log('Sending request to SCB API:', JSON.stringify(query));
+    console.log('Skickar förfrågan till SCB API:', JSON.stringify(query));
     try {
         const response = await axios.post(SCB_API_URL, query, {
             headers: {
@@ -85,132 +96,135 @@ const fetchDataFromSCB = async () => {
                 'Accept': 'application/json'
             }
         });
-        console.log('Received response from SCB API:', JSON.stringify(response.data));
+        console.log('Mottog svar från SCB API:', JSON.stringify(response.data));
         return response.data;
     } catch (error) {
-        console.error('Error fetching data from SCB:', error.response ? error.response.data : error.message);
-        throw error;
+        console.error('Fel vid hämtning av data från SCB:', error.response ? error.response.data : error.message);
+        throw new Error('Kunde inte hämta data från SCB API');
     }
 };
 
 /**
- * Updates the database with fetched data
- * @param {Object} scbData - The data fetched from SCB API
- * @returns {Promise<number>} The number of updated records
+ * Uppdaterar databasen med hämtad data
+ * @param {Object} scbData - Data hämtad från SCB API
+ * @returns {Promise<number>} Antalet uppdaterade poster
+ * @throws {Error} Om uppdateringen misslyckas
  */
 const updateDatabase = async (scbData) => {
-    console.log('Updating database with fetched data...');
+    console.log('Uppdaterar databasen med hämtad data...');
     let updatedCount = 0;
+    const bulkOps = [];
+
     for (const { key, values } of scbData.data) {
         const [municipalityCode, gender, year] = key;
         const value = values[0];
 
         if (!value) {
-            console.warn(`Skipping undefined value for ${municipalityCode}, ${gender}, ${year}`);
+            console.warn(`Hoppar över odefinierat värde för ${municipalityCode}, ${gender}, ${year}`);
             continue;
         }
 
         const numericValue = Number(value);
         if (isNaN(numericValue)) {
-            console.warn(`Skipping non-numeric value for ${municipalityCode}, ${year}: ${value}`);
+            console.warn(`Hoppar över icke-numeriskt värde för ${municipalityCode}, ${year}: ${value}`);
             continue;
         }
 
-        const municipalityName = municipalityMapping[municipalityCode] || 'Unknown';
+        const municipalityName = municipalityMapping[municipalityCode] || 'Okänd';
 
-        try {
-            await BirthData.findOneAndUpdate(
-                { municipalityCode, gender, year },
-                {
-                    $set: {
-                        value: numericValue,
-                        municipalityName
-                    }
-                },
-                { upsert: true, new: true }
-            );
-            updatedCount++;
-            console.log(`Successfully updated data for ${municipalityCode}, ${gender}, ${year}`);
-        } catch (error) {
-            console.error(`Error updating data for ${municipalityCode}, ${year}:`, error);
-        }
+        bulkOps.push({
+            updateOne: {
+                filter: { municipalityCode, gender, year },
+                update: { $set: { value: numericValue, municipalityName } },
+                upsert: true
+            }
+        });
+
+        updatedCount++;
     }
-    console.log(`Total records updated: ${updatedCount}`);
-    return updatedCount;
+
+    try {
+        await BirthData.bulkWrite(bulkOps);
+        console.log(`Totalt antal uppdaterade poster: ${updatedCount}`);
+        return updatedCount;
+    } catch (error) {
+        console.error('Fel vid uppdatering av databasen:', error);
+        throw new Error('Kunde inte uppdatera databasen');
+    }
 };
 
 /**
- * Updates birth data
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
+ * Uppdaterar födelsedata
+ * @param {Object} req - Express request-objekt
+ * @param {Object} res - Express response-objekt
  */
 exports.updateBirthData = async (req, res) => {
-    console.log('Received request to update birth data');
+    console.log('Mottog förfrågan om att uppdatera födelsedata');
     try {
         const scbData = await fetchDataFromSCB();
         const updatedCount = await updateDatabase(scbData);
-        console.log(`Birth data successfully updated. Processed ${updatedCount} data points.`);
+        console.log(`Födelsedata uppdaterad. Behandlade ${updatedCount} datapunkter.`);
 
-        // Clear the cache after updating
+        // Rensa cachen efter uppdatering
         dataCache.del('allBirthData');
 
-        res.json({ message: `Birth data successfully updated. Processed ${updatedCount} data points.` });
+        res.json({ meddelande: `Födelsedata uppdaterad. Behandlade ${updatedCount} datapunkter.` });
     } catch (error) {
-        console.error('Error updating birth data:', error);
-        res.status(500).json({ message: 'Error updating birth data', error: error.message });
+        console.error('Fel vid uppdatering av födelsedata:', error);
+        res.status(500).json({ meddelande: 'Fel vid uppdatering av födelsedata', fel: error.message });
     }
 };
 
 /**
- * Retrieves all birth data
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
+ * Hämtar all födelsedata
+ * @param {Object} req - Express request-objekt
+ * @param {Object} res - Express response-objekt
  */
 exports.getAllBirthData = async (req, res) => {
-    console.log('Received request to fetch all birth data');
+    console.log('Mottog förfrågan om att hämta all födelsedata');
     try {
         let birthData = dataCache.get('allBirthData');
         if (!birthData) {
-            console.log('Cache miss. Fetching data from database...');
+            console.log('Cache-miss. Hämtar data från databasen...');
             birthData = await BirthData.find({});
             dataCache.set('allBirthData', birthData);
-            console.log('Data fetched from database and cached.');
+            console.log('Data hämtad från databasen och cachad.');
         } else {
-            console.log('Data retrieved from cache.');
+            console.log('Data hämtad från cache.');
         }
-        console.log(`Returning ${birthData.length} data points.`);
+        console.log(`Returnerar ${birthData.length} datapunkter.`);
         res.json(birthData);
     } catch (error) {
-        console.error('Failed to fetch birth data:', error);
-        res.status(500).json({ message: 'Error fetching birth data', error: error.message });
+        console.error('Misslyckades med att hämta födelsedata:', error);
+        res.status(500).json({ meddelande: 'Fel vid hämtning av födelsedata', fel: error.message });
     }
 };
 
 /**
- * Retrieves birth data for a specific municipality
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
+ * Hämtar födelsedata för en specifik kommun
+ * @param {Object} req - Express request-objekt
+ * @param {Object} res - Express response-objekt
  */
 exports.getMunicipalityData = async (req, res) => {
     const { municipalityCode } = req.params;
-    console.log(`Received request to fetch birth data for municipality: ${municipalityCode}`);
+    console.log(`Mottog förfrågan om att hämta födelsedata för kommun: ${municipalityCode}`);
     try {
         const municipalityData = await BirthData.find({ municipalityCode });
-        console.log(`Returning ${municipalityData.length} data points for municipality ${municipalityCode}`);
+        console.log(`Returnerar ${municipalityData.length} datapunkter för kommun ${municipalityCode}`);
         res.json(municipalityData);
     } catch (error) {
-        console.error(`Failed to fetch birth data for municipality ${municipalityCode}:`, error);
-        res.status(500).json({ message: 'Error fetching municipality data', error: error.message });
+        console.error(`Misslyckades med att hämta födelsedata för kommun ${municipalityCode}:`, error);
+        res.status(500).json({ meddelande: 'Fel vid hämtning av kommundata', fel: error.message });
     }
 };
 
 /**
- * Retrieves aggregated birth data for all municipalities
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
+ * Hämtar aggregerad födelsedata för alla kommuner
+ * @param {Object} req - Express request-objekt
+ * @param {Object} res - Express response-objekt
  */
 exports.getAggregatedData = async (req, res) => {
-    console.log('Received request to fetch aggregated birth data');
+    console.log('Mottog förfrågan om att hämta aggregerad födelsedata');
     try {
         const aggregatedData = await BirthData.aggregate([
             {
@@ -224,10 +238,162 @@ exports.getAggregatedData = async (req, res) => {
                 $sort: { "_id.year": 1, "_id.municipalityCode": 1 }
             }
         ]);
-        console.log(`Returning aggregated data for ${aggregatedData.length} municipality-year combinations`);
+        console.log(`Returnerar aggregerad data för ${aggregatedData.length} kommun-år-kombinationer`);
         res.json(aggregatedData);
     } catch (error) {
-        console.error('Failed to fetch aggregated birth data:', error);
-        res.status(500).json({ message: 'Error fetching aggregated data', error: error.message });
+        console.error('Misslyckades med att hämta aggregerad födelsedata:', error);
+        res.status(500).json({ meddelande: 'Fel vid hämtning av aggregerad data', fel: error.message });
     }
 };
+
+/**
+ * Hämtar trenddata för födslar över tid
+ * @param {Object} req - Express request-objekt
+ * @param {Object} res - Express response-objekt
+ */
+exports.getBirthTrends = async (req, res) => {
+    console.log('Mottog förfrågan om att hämta trenddata för födslar');
+    try {
+        const trends = await BirthData.aggregate([
+            {
+                $group: {
+                    _id: { year: "$year", gender: "$gender" },
+                    totalBirths: { $sum: "$value" }
+                }
+            },
+            {
+                $sort: { "_id.year": 1, "_id.gender": 1 }
+            }
+        ]);
+        console.log(`Returnerar trenddata för ${trends.length} år-kön-kombinationer`);
+        res.json(trends);
+    } catch (error) {
+        console.error('Misslyckades med att hämta trenddata för födslar:', error);
+        res.status(500).json({ meddelande: 'Fel vid hämtning av trenddata', fel: error.message });
+    }
+};
+
+/**
+ * Hämtar jämförelsedata mellan kommuner
+ * @param {Object} req - Express request-objekt
+ * @param {Object} res - Express response-objekt
+ */
+exports.compareMunicipalities = async (req, res) => {
+    const { municipalityCodes } = req.query;
+    console.log(`Mottog förfrågan om att jämföra kommuner: ${municipalityCodes}`);
+    try {
+        if (!municipalityCodes || municipalityCodes.length === 0) {
+            throw new Error('Inga kommunkoder angivna för jämförelse');
+        }
+        const comparisonData = await BirthData.aggregate([
+            {
+                $match: { municipalityCode: { $in: municipalityCodes.split(',') } }
+            },
+            {
+                $group: {
+                    _id: { municipalityCode: "$municipalityCode", year: "$year" },
+                    totalBirths: { $sum: "$value" },
+                    municipalityName: { $first: "$municipalityName" }
+                }
+            },
+            {
+                $sort: { "_id.year": 1, "_id.municipalityCode": 1 }
+            }
+        ]);
+        console.log(`Returnerar jämförelsedata för ${comparisonData.length} datapunkter`);
+        res.json(comparisonData);
+    } catch (error) {
+        console.error('Misslyckades med att hämta jämförelsedata:', error);
+        res.status(500).json({ meddelande: 'Fel vid hämtning av jämförelsedata', fel: error.message });
+    }
+};
+
+/**
+ * Hämtar statistik för födelsetal
+ * @param {Object} req - Express request-objekt
+ * @param {Object} res - Express response-objekt
+ */
+exports.getBirthStatistics = async (req, res) => {
+    console.log('Mottog förfrågan om att hämta statistik för födelsetal');
+    try {
+        const statistics = await BirthData.aggregate([
+            {
+                $group: {
+                    _id: null,
+                    totalBirths: { $sum: "$value" },
+                    averageBirths: { $avg: "$value" },
+                    maxBirths: { $max: "$value" },
+                    minBirths: { $min: "$value" }
+                }
+            }
+        ]);
+        console.log('Returnerar statistik för födelsetal');
+        res.json(statistics[0]);
+    } catch (error) {
+        console.error('Misslyckades med att hämta statistik för födelsetal:', error);
+        res.status(500).json({ meddelande: 'Fel vid hämtning av statistik', fel: error.message });
+    }
+};
+
+/**
+ * Hämtar topplista över kommuner med högst födelsetal
+ * @param {Object} req - Express request-objekt
+ * @param {Object} res - Express response-objekt
+ */
+exports.getTopMunicipalities = async (req, res) => {
+    const { year, limit = 10 } = req.query;
+    console.log(`Mottog förfrågan om att hämta topplista för år ${year}, gräns: ${limit}`);
+    try {
+        if (!year) {
+            throw new Error('Inget år angivet för topplistan');
+        }
+        const topMunicipalities = await BirthData.aggregate([
+            {
+                $match: { year: year }
+            },
+            {
+                $group: {
+                    _id: "$municipalityCode",
+                    totalBirths: { $sum: "$value" },
+                    municipalityName: { $first: "$municipalityName" }
+                }
+            },
+            {
+                $sort: { totalBirths: -1 }
+            },
+            {
+                $limit: parseInt(limit)
+            }
+        ]);
+        console.log(`Returnerar topplista med ${topMunicipalities.length} kommuner`);
+        res.json(topMunicipalities);
+    } catch (error) {
+        console.error('Misslyckades med att hämta topplista:', error);
+        res.status(500).json({ meddelande: 'Fel vid hämtning av topplista', fel: error.message });
+    }
+};
+
+/**
+ * Hämtar födelsedata filtrerad på specifika kriterier
+ * @param {Object} req - Express request-objekt
+ * @param {Object} res - Express response-objekt
+ */
+exports.getFilteredBirthData = async (req, res) => {
+    const { year, gender, municipalityCode } = req.query;
+    console.log(`Mottog förfrågan om filtrerad födelsedata: År=${year}, Kön=${gender}, Kommun=${municipalityCode}`);
+    try {
+        let query = {};
+        if (year) query.year = year;
+        if (gender) query.gender = gender;
+        if (municipalityCode) query.municipalityCode = municipalityCode;
+
+        const filteredData = await BirthData.find(query);
+        console.log(`Returnerar ${filteredData.length} filtrerade datapunkter`);
+        res.json(filteredData);
+    } catch (error) {
+        console.error('Misslyckades med att hämta filtrerad födelsedata:', error);
+        res.status(500).json({ meddelande: 'Fel vid hämtning av filtrerad data', fel: error.message });
+    }
+};
+
+module.exports = exports;
